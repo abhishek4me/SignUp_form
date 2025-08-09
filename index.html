@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Form</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Hello!</h1>
+            <p>Join the club for exclusive offers</p>
+        </div>
+        
+        <div class="form-section">
+            <h2>Sign Up</h2>
+            <form id="signupForm" novalidate>
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        name="fullName" 
+                        required 
+                        minlength="2"
+                        pattern="[A-Za-z\s]+"
+                        title="Please enter a valid name (letters and spaces only)"
+                    >
+                    <span class="error-message" id="fullNameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                        title="Please enter a valid email address"
+                    >
+                    <span class="error-message" id="emailError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        required 
+                        minlength="3"
+                        maxlength="20"
+                        pattern="[A-Za-z0-9_]+"
+                        title="Username must be 3-20 characters long and contain only letters, numbers, and underscores"
+                    >
+                    <span class="error-message" id="usernameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required 
+                        minlength="8"
+                        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}"
+                        title="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+                    >
+                    <span class="error-message" id="passwordError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        required
+                    >
+                    <span class="error-message" id="confirmPasswordError"></span>
+                </div>
+
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            clearErrors();
+            
+            let isValid = true;
+            
+            // Get form elements
+            const fullName = document.getElementById('fullName');
+            const email = document.getElementById('email');
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            // Validate Full Name
+            if (!fullName.value.trim()) {
+                showError('fullNameError', 'Full name is required');
+                isValid = false;
+            } else if (fullName.value.trim().length < 2) {
+                showError('fullNameError', 'Full name must be at least 2 characters long');
+                isValid = false;
+            } else if (!/^[A-Za-z\s]+$/.test(fullName.value)) {
+                showError('fullNameError', 'Full name should contain only letters and spaces');
+                isValid = false;
+            }
+            
+            // Validate Email
+            if (!email.value.trim()) {
+                showError('emailError', 'Email is required');
+                isValid = false;
+            } else if (!isValidEmail(email.value)) {
+                showError('emailError', 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            // Validate Username
+            if (!username.value.trim()) {
+                showError('usernameError', 'Username is required');
+                isValid = false;
+            } else if (username.value.length < 3 || username.value.length > 20) {
+                showError('usernameError', 'Username must be between 3 and 20 characters');
+                isValid = false;
+            } else if (!/^[A-Za-z0-9_]+$/.test(username.value)) {
+                showError('usernameError', 'Username can only contain letters, numbers, and underscores');
+                isValid = false;
+            }
+            
+            // Validate Password
+            if (!password.value) {
+                showError('passwordError', 'Password is required');
+                isValid = false;
+            } else if (password.value.length < 8) {
+                showError('passwordError', 'Password must be at least 8 characters long');
+                isValid = false;
+            } else if (!isStrongPassword(password.value)) {
+                showError('passwordError', 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character');
+                isValid = false;
+            }
+            
+            // Validate Confirm Password
+            if (!confirmPassword.value) {
+                showError('confirmPasswordError', 'Please confirm your password');
+                isValid = false;
+            } else if (password.value !== confirmPassword.value) {
+                showError('confirmPasswordError', 'Passwords do not match');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Form is valid, you can submit the data
+                alert('Form submitted successfully!');
+                console.log('Form Data:', {
+                    fullName: fullName.value,
+                    email: email.value,
+                    username: username.value,
+                    password: password.value
+                });
+                
+                // Reset form
+                this.reset();
+            }
+        });
+        
+        function showError(elementId, message) {
+            document.getElementById(elementId).textContent = message;
+            document.getElementById(elementId).style.display = 'block';
+        }
+        
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.textContent = '';
+                element.style.display = 'none';
+            });
+        }
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+            return emailRegex.test(email);
+        }
+        
+        function isStrongPassword(password) {
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return passwordRegex.test(password);
+        }
+        
+        // Real-time validation for confirm password
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                showError('confirmPasswordError', 'Passwords do not match');
+            } else {
+                document.getElementById('confirmPasswordError').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
